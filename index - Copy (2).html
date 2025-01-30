@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer's Workbench</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <div class="container">
+        <div class="section">
+            <h1>🚀 Developer Tasks</h1>
+            <div class="progress-bar">
+                <div class="progress" id="taskProgress"></div>
+            </div>
+            <div class="pomodoro">
+                <h3>Pomodoro Timer</h3>
+                <div class="timer" id="timer">25:00</div>
+                <button onclick="toggleTimer()" id="timerBtn">Start</button>
+                <button onclick="resetTimer()">Reset</button>
+                <div class="input-section">
+                    <input type="number" id="workDuration" placeholder="Work (min)" value="25" min="1">
+                    <input type="number" id="breakDuration" placeholder="Break (min)" value="5" min="1">
+                </div>
+            </div>
+            <div class="filters">
+                <select id="priorityFilter" onchange="filterTasks()">
+                    <option value="all">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <select id="categoryFilter" onchange="filterTasks()">
+                    <option value="all">All Categories</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="learning">Learning</option>
+                </select>
+                <input type="text" id="searchTasks" placeholder="Search tasks..." onkeyup="filterTasks()">
+            </div>
+            <div class="input-section">
+                <input type="text" id="todoInput" placeholder="New task...">
+                <select id="taskPriority">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <select id="taskCategory">
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="learning">Learning</option>
+                </select>
+                <input type="date" id="taskDueDate">
+                <button onclick="addTodo()">Add</button>
+            </div>
+            <ul class="list" id="todoList"></ul>
+        </div>
+
+        <div class="section">
+            <h1>📝 Code Snippets & Notes</h1>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(this, 'markdown')">Markdown</div>
+                <div class="tab" onclick="switchTab(this, 'code')">Code</div>
+            </div>
+            <div class="input-section">
+                <input type="text" id="noteTitle" placeholder="Title...">
+                <select id="codeLanguage" style="display: none;">
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="sql">SQL</option>
+                </select>
+            </div>
+            <div class="input-section">
+                <textarea id="noteContent" placeholder="Write in Markdown..."></textarea>
+            </div>
+            <div id="preview" class="markdown-preview"></div>
+            <div class="input-section">
+                <button onclick="saveNote()">Save</button>
+                <button onclick="exportData()">Export Data</button>
+                <input type="file" id="importData" accept=".json" style="display: none;" onchange="importData(event)">
+                <button onclick="document.getElementById('importData').click()">Import Data</button>
+            </div>
+            <div class="list" id="notesList"></div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
