@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer's Workbench</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+    <style>
+        /* Previous styles remain the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #1a1a1a, #2c3e50);
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #333;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            color: #e0e0e0;
+        }
+
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], textarea, select {
+            flex: 1;
+            padding: 12px;
+            background: #333;
+            border: 2px solid #444;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #e0e0e0;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Consolas', monospace;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .list {
+            list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .item {
+            background: #333;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            padding: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .code-preview {
+            background: #282c34;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #2980b9;
+            border-radius: 15px;
+            margin: 5px;
+            font-size: 12px;
+        }
+
+        .priority-high { border-left: 4px solid #e74c3c; }
+        .priority-medium { border-left: 4px solid #f1c40f; }
+        .priority-low { border-left: 4px solid #2ecc71; }
+
+        .search-bar {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .markdown-preview {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .markdown-preview img {
+            max-width: 100%;
+        }
+
+        .pomodoro {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h1>🚀 Developer Tasks</h1>
+            <div class="pomodoro">
+                <h3>Pomodoro Timer</h3>
+                <div class="timer" id="timer">25:00</div>
+                <button onclick="toggleTimer()" id="timerBtn">Start</button>
+                <button onclick="resetTimer()">Reset</button>
+            </div>
+            <div class="filters">
+                <select id="priorityFilter" onchange="filterTasks()">
+                    <option value="all">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <input type="text" id="searchTasks" placeholder="Search tasks..." onkeyup="filterTasks()">
+            </div>
+            <div class="input-section">
+                <input type="text" id="todoInput" placeholder="New task...">
+                <select id="taskPriority">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <button onclick="addTodo()">Add</button>
+            </div>
+            <ul class="list" id="todoList"></ul>
+        </div>
+
+        <div class="section">
+            <h1>📝 Code Snippets & Notes</h1>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(this, 'markdown')">Markdown</div>
+                <div class="tab" onclick="switchTab(this, 'code')">Code</div>
+            </div>
+            <div class="input-section">
+                <input type="text" id="noteTitle" placeholder="Title...">
+            </div>
+            <div class="input-section">
+                <select id="codeLanguage" style="display: none;">
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="sql">SQL</option>
+                </select>
+            </div>
+            <div class="input-section">
+                <textarea id="noteContent" placeholder="Write in Markdown..."></textarea>
+            </div>
+            <div id="preview" class="markdown-preview"></div>
+            <button onclick="saveNote()">Save</button>
+            <div class="list" id="notesList"></div>
+        </div>
+    </div>
+
+    <script>
+        let isMarkdownMode = true;
+        let timer;
+        let timeLeft = 1500; // 25 minutes in seconds
+        let isTimerRunning = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTodos();
+            loadNotes();
+            
+            // Live preview for markdown/code
+            document.getElementById('noteContent').addEventListener('input', updatePreview);
+            
+            // Enter key handlers
+            document.getElementById('todoInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTodo();
+            });
+        });
+
+        function updatePreview() {
+            const content = document.getElementById('noteContent').value;
+            const preview = document.getElementById('preview');
+            
+            if (isMarkdownMode) {
+                preview.innerHTML = marked.parse(content);
+            } else {
+                preview.innerHTML = `<pre><code class="${document.getElementById('codeLanguage').value}">${content}</code></pre>`;
+                hljs.highlightAll();
+            }
+        }
+
+        function switchTab(tab, mode) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            isMarkdownMode = mode === 'markdown';
+            document.getElementById('codeLanguage').style.display = isMarkdownMode ? 'none' : 'block';
+            document.getElementById('noteContent').placeholder = isMarkdownMode ? 'Write in Markdown...' : 'Enter code...';
+            updatePreview();
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const priority = document.getElementById('taskPriority').value;
+            const text = input.value.trim();
+            
+            if (text) {
+                const todo = {
+                    id: Date.now(),
+                    text: text,
+                    completed: false,
+                    priority: priority,
+                    timestamp: new Date().toISOString()
+                };
+
+                const todos = getTodos();
+                todos.push(todo);
+                saveTodos(todos);
+                renderTodo(todo);
+                input.value = '';
+            }
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            const language = document.getElementById('codeLanguage').value;
+
+            if (title && content) {
+                const note = {
+                    id: Date.now(),
+                    title: title,
+                    content: content,
+                    isCode: !isMarkdownMode,
+                    language: language,
+                    timestamp: new Date().toISOString()
+                };
+
+                const notes = getNotes();
+                notes.push(note);
+                saveNotes(notes);
+                renderNote(note);
+
+                document.getElementById('noteTitle').value = '';
+                document.getElementById('noteContent').value = '';
+                document.getElementById('preview').innerHTML = '';
+            }
+        }
+
+        function renderTodo(todo) {
+            const li = document.createElement('li');
+            li.className = `item priority-${todo.priority}`;
+            li.setAttribute('data-id', todo.id);
+            
+            li.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+                            onclick="toggleTodo(${todo.id})">
+                        <span style="${todo.completed ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${todo.text}</span>
+                    </div>
+                    <div>
+                        <span class="tag">${todo.priority}</span>
+                        <button onclick="deleteTodo(${todo.id})">Delete</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('todoList').prepend(li);
+        }
+
+        function renderNote(note) {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.setAttribute('data-note-id', note.id);
+            
+            let content = note.isCode 
+                ? `<pre><code class="${note.language}">${note.content}</code></pre>`
+                : marked.parse(note.content);
+
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>${note.title}</h3>
+                    <button onclick="deleteNote(${note.id})">Delete</button>
+                </div>
+                <div class="${note.isCode ? 'code-preview' : 'markdown-preview'}">${content}</div>
+                <div style="margin-top: 10px;">
+                    <span class="tag">${note.isCode ? note.language : 'markdown'}</span>
+                    <span class="tag">${new Date(note.timestamp).toLocaleDateString()}</span>
+                </div>
+            `;
+            
+            document.getElementById('notesList').prepend(div);
+            if (note.isCode) hljs.highlightAll();
+        }
+
+        function filterTasks() {
+            const priority = document.getElementById('priorityFilter').value;
+            const search = document.getElementById('searchTasks').value.toLowerCase();
+            const todos = getTodos();
+
+            document.getElementById('todoList').innerHTML = '';
+            todos.filter(todo => {
+                const matchesPriority = priority === 'all' || todo.priority === priority;
+                const matchesSearch = todo.text.toLowerCase().includes(search);
+                return matchesPriority && matchesSearch;
+            }).forEach(todo => renderTodo(todo));
+        }
+
+        function toggleTimer() {
+            if (isTimerRunning) {
+                clearInterval(timer);
+                document.getElementById('timerBtn').textContent = 'Start';
+            } else {
+                timer = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft === 0) {
+                        clearInterval(timer);
+                        alert('Time is up! Take a break.');
+                        resetTimer();
+                    }
+                }, 1000);
+                document.getElementById('timerBtn').textContent = 'Pause';
+            }
+            isTimerRunning = !isTimerRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 1500;
+            isTimerRunning = false;
+            document.getElementById('timerBtn').textContent = 'Start';
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Storage functions remain the same
+        function getTodos() {
+            return JSON.parse(localStorage.getItem('todos') || '[]');
+        }
+
+        function getNotes() {
+            return JSON.parse(localStorage.getItem('notes') || '[]');
+        }
+
+        function saveTodos(todos) {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function saveNotes(notes) {
+            localStorage.setItem('notes', JSON.stringify(notes));
+        }
+
+        function toggleTodo(id) {
+            const todos = getTodos();
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos(todos);
+                filterTasks();
+            }
+        }
+
+        function deleteTodo(id) {
+            const todos = getTodos().filter(t => t.id !== id);
+            saveTodos(todos);
+            filterTasks();
+        }
+
+        function deleteNote(id) {
+            const notes = getNotes().filter(n => n.id !== id);
+            saveNotes(notes);
+            loadNotes();
+        }
+
+        function loadTodos() {
+            document.getElementById('todoList').innerHTML = '';
+            const todos = getTodos();
+            todos.forEach(todo => renderTodo(todo));
+        }
+
+        function loadNotes() {
+            document.getElementById('notesList').innerHTML = '';
+            const notes = getNotes();
+            notes.forEach(note => renderNote(note));
+        }
+    </script>
+</body>
+</html>
+
+
