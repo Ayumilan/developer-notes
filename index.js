@@ -4,6 +4,21 @@ let timeLeft = 1500; // 25 minutes in seconds
 let isTimerRunning = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Set default date to today
+    const dateFilter = document.getElementById('dateFilter');
+    dateFilter.valueAsDate = new Date();
+    
+    // Initial load with date filter
+    filterByDate();
+});
+
+function filterByDate() {
+    filterTasks();
+    filterNotes();
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
@@ -80,7 +95,7 @@ function addTodo() {
     const dueDate = document.getElementById('taskDueDate').value;
     const text = input.value.trim();
     
-    if (text) {
+    if (text && dueDate) {
         const todo = {
             id: Date.now(),
             text: text,
@@ -94,8 +109,8 @@ function addTodo() {
         const todos = getTodos();
         todos.push(todo);
         saveTodos(todos);
-        renderTodo(todo);
         input.value = '';
+        filterTasks();
         updateProgressBar();
     }
 }
@@ -118,11 +133,11 @@ function saveNote() {
         const notes = getNotes();
         notes.push(note);
         saveNotes(notes);
-        renderNote(note);
 
         document.getElementById('noteTitle').value = '';
         document.getElementById('noteContent').value = '';
         document.getElementById('preview').innerHTML = '';
+        filterNotes();
     }
 }
 
@@ -177,6 +192,7 @@ function renderNote(note) {
 }
 
 function filterTasks() {
+    const selectedDate = document.getElementById('dateFilter').value;
     const priority = document.getElementById('priorityFilter').value;
     const category = document.getElementById('categoryFilter').value;
     const search = document.getElementById('searchTasks').value.toLowerCase();
@@ -187,7 +203,8 @@ function filterTasks() {
         const matchesPriority = priority === 'all' || todo.priority === priority;
         const matchesCategory = category === 'all' || todo.category === category;
         const matchesSearch = todo.text.toLowerCase().includes(search);
-        return matchesPriority && matchesCategory && matchesSearch;
+        const matchesDate = todo.dueDate === selectedDate;
+        return matchesPriority && matchesCategory && matchesSearch && matchesDate;
     }).forEach(todo => renderTodo(todo));
 }
 
@@ -332,4 +349,33 @@ function importData(event) {
         };
         reader.readAsText(file);
     }
-        } 
+}
+
+function filterNotes() {
+    const selectedDate = document.getElementById('dateFilter').value;
+    const notes = getNotes();
+    
+    document.getElementById('notesList').innerHTML = '';
+    notes.filter(note => {
+        const noteDate = new Date(note.timestamp).toISOString().split('T')[0];
+        return noteDate === selectedDate;
+    }).forEach(note => renderNote(note));
+}
+
+function setPlaceholder(input) {
+    if (!input.value) {
+        input.style.color = "#aaa";
+        input.type = "text";
+        input.value = "Due Date";
+    }
+}
+
+document.getElementById("taskDueDate").addEventListener("focus", function() {
+    if (this.value === "Due Date") {
+        this.value = "";
+        this.type = "date";
+        this.style.color = "#000";
+    }
+});
+
+setPlaceholder(document.getElementById("taskDueDate"));
