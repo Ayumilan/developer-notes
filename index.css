@@ -37,7 +37,7 @@ body.light-mode {
     color: var(--light-text);
 }
 
-.theme-toggle {
+/* .theme-toggle {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -53,7 +53,7 @@ body.light-mode {
     display: flex;
     align-items: center;
     justify-content: center;
-}
+} */
 
 .container {
     max-width: 1400px;
@@ -339,4 +339,46 @@ body.light-mode .pomodoro {
 
 body.light-mode ::-webkit-scrollbar-track {
     background: var(--light-input-bg);
+}
+.date-filter {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.date-filter h2 {
+    margin: 0;
+    color: var(--accent-color);
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.light-mode .top-bar {
+    background-color: var(--light-bg);
+    color: var(--light-text);
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2em;
+    cursor: pointer;
 }

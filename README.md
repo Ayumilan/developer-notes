@@ -2,9 +2,7 @@
 
 A productivity-focused web application for developers combining task management, code snippets, notes, and a Pomodoro timer.
 
-**Hosted At:** [xyz.com](https://xyz.com) (Replace with your actual domain)
-
-![App Preview](https://via.placeholder.com/800x600.png?text=Developer's+Workbench+Preview)
+**Hosted At:** [https://ayumilan.github.io/developer-notes/](https://ayumilan.github.io/developer-notes/)
 
 ## Features ✨
 
