@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,8 +13,17 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <div class="top-bar">
+        <span></span>
+        <div class="date-filter" style="">
+                <h2>📅 Viewing Date:</h2>
+                <input type="date" id="dateFilter" onchange="filterByDate()">
+            </div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+    
     <div class="container">
+        
         <div class="section">
             <h1>🚀 Developer Tasks</h1>
             <div class="progress-bar">
@@ -32,6 +40,7 @@
                 </div>
             </div>
             <div class="filters">
+		<span>Filter:</span>
                 <select id="priorityFilter" onchange="filterTasks()">
                     <option value="all">All Priorities</option>
                     <option value="high">High</option>
@@ -58,7 +67,7 @@
                     <option value="personal">Personal</option>
                     <option value="learning">Learning</option>
                 </select>
-                <input type="date" id="taskDueDate">
+                <input type="date" id="taskDueDate" onfocus="this.showPicker()" onblur="setPlaceholder(this)" placeholder="Due Date">
                 <button onclick="addTodo()">Add</button>
             </div>
             <ul class="list" id="todoList"></ul>
